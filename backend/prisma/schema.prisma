@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:postgres@localhost:5432/quotes_db" //env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Quotes {
+  id             String         @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  insurance_type insurance_type
+  date_submitted DateTime       @db.Date
+  estimate       Decimal        @db.Decimal
+  ownerid        String         @db.Uuid
+  users          users          @relation(fields: [ownerid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "quote_owner_fk")
+
+  @@ignore
+}
+
+model incompletequotes {
+  id      String @id(map: "incomplete_quotes_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fields  Json?  @db.Json
+  ownerid String @db.Uuid
+  users   users  @relation(fields: [ownerid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "incompletequote_owner_fk")
+}
+
+model users {
+  id               String             @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fname            String             @db.VarChar
+  lname            String             @db.VarChar
+  dob              DateTime           @db.Date
+  email            String             @unique(map: "users_unique")
+  Quotes           Quotes[]           @ignore
+  incompletequotes incompletequotes[]
+}
+
+enum insurance_type {
+  automotive
+  home
+  life
+}

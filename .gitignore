@@ -1,0 +1,12 @@
+.DS_Store
+# React Router
+/**/.react-router/
+/**/build/
+
+/**/node_modules
+# Keep environment variables out of version control
+.env
+/**/.env
+
+/**/generated/prisma
+/**/dist

@@ -1,0 +1,105 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: docker/Dockerfile
+    container_name: react-frontend
+    ports:
+      - "3000:3000"
+      - "5173:5173"
+    volumes:
+      - ./frontend/docker:/opt/docker
+      - ./frontend/quote-resume:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_GRAPHQL_URL=http://localhost:4000/graphql
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: docker/Dockerfile
+    container_name: node-backend
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=quotes_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    depends_on:
+      - db
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/graphql`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=4000"
+
+  db:
+    image: postgres:17
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: quotes_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  proxy:
+    image: traefik:v3.0
+    container_name: traefik-proxy
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"   # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+
+  observability:
+    image: public.ecr.aws/zinclabs/openobserve:latest
+    container_name: openobserve
+    restart: unless-stopped
+    environment:
+      - ZO_ROOT_USER_EMAIL=admin@example.com
+      - ZO_ROOT_USER_PASSWORD=admin123
+    ports:
+      - "5080:5080"
+    volumes:
+      - openobserve_data:/data
+    networks:
+      - app-network
+    depends_on:
+      - frontend
+      - backend
+      - db
+
+volumes:
+  postgres_data:
+  openobserve_data:
+
+networks:
+  app-network:
+    driver: bridge

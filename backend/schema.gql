@@ -1,0 +1,55 @@
+# The "Query" type is the root of all GraphQL queries
+type Query {
+  greeting: String
+  # Get all books
+  books: [Book!]!
+  # Get a specific book by ID
+  book(id: ID!): Book
+  # Search books by title or author
+  searchBooks(query: String!): [Book!]!
+  addBook(input: BookInput!): Book!
+  updateBook(id: ID!, input: BookInput!): Book!
+  deleteBook(id: ID!): Boolean
+  users: [User]
+  user(id: String!): User
+  userByEmail(email: String!): User
+}
+
+type User {
+  id: String!
+  fname: String
+  lname: String
+  dob: String
+  email: String!
+}
+
+input UserInput {
+  fname: String!
+  lname: String!
+  dob: String!
+  email: String!
+}
+
+# A book has a title, author, and publication year
+type Book {
+  id: ID!
+  title: String!
+  author: String!
+  year: Int
+  genre: String
+}
+
+# Input type for adding/updating books
+input BookInput {
+  title: String
+  author: String
+  year: Int
+  genre: String
+}
+
+type Mutation {
+  addBook(input: BookInput!): Book!
+  updateBook(id: ID!, input: BookInput!): Book
+  deleteBook(id: ID!): Boolean
+}
+

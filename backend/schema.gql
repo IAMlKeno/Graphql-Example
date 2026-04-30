@@ -7,12 +7,14 @@ type Query {
   book(id: ID!): Book
   # Search books by title or author
   searchBooks(query: String!): [Book!]!
-  addBook(input: BookInput!): Book!
-  updateBook(id: ID!, input: BookInput!): Book!
-  deleteBook(id: ID!): Boolean
   users: [User]
   user(id: String!): User
   userByEmail(email: String!): User
+  quotes(type: String): [Quote]
+  quote(id: String!): Quote
+  quotesByUser(ownerid: String!): [Quote]
+  incompleteQuotesForUser(ownerid: String!): [Quote]
+  incompleteQuote(id: String!): Quote
 }
 
 type User {
@@ -47,9 +49,51 @@ input BookInput {
   genre: String
 }
 
+# Enum value
+enum InsuranceType {
+  automotive
+  home
+  life
+}
+type Quote {
+  id: String!
+  insurance_type: InsuranceType
+  date_submitted: String
+  estimate: Float!
+  ownerid: String
+}
+type User {
+  id: String!
+  fname: String
+  lname: String
+  dob: String
+  email: String!
+}
+input QuoteInput {
+  insurance_type: InsuranceType
+  estimate: Float!
+  ownerid: String
+}
+input UserInput {
+  fname: String
+  lname: String
+  dob: String
+  email: String!
+}
+
+
 type Mutation {
   addBook(input: BookInput!): Book!
   updateBook(id: ID!, input: BookInput!): Book
   deleteBook(id: ID!): Boolean
+  addQuote(quote: QuoteInput): Quote!
+  updateQuote(id: String, quote: QuoteInput): Quote
+  deleteQuote(id: String!): Boolean
+  addIncompleteQuote(quote: QuoteInput): Quote
+  updateIncompleteQuote(id: String!, quote: QuoteInput): Boolean
+  deleteIncompleteQuote(id: String!): Boolean
+  addUser(user: UserInput): User!
+  updateUser(id: String!, user: UserInput): User
+  deleteUser(id: String!): Boolean
 }
 

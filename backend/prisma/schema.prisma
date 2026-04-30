@@ -5,26 +5,25 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:postgres@localhost:5432/quotes_db" //env("DATABASE_URL")
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model Quotes {
-  id             String         @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  insurance_type insurance_type
-  date_submitted DateTime       @db.Date
-  estimate       Decimal        @db.Decimal
-  ownerid        String         @db.Uuid
-  users          users          @relation(fields: [ownerid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "quote_owner_fk")
-
-  @@ignore
+  url      = "postgresql://postgres:postgres@localhost:5432/quotes_db"
 }
 
 model incompletequotes {
-  id      String @id(map: "incomplete_quotes_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  fields  Json?  @db.Json
-  ownerid String @db.Uuid
-  users   users  @relation(fields: [ownerid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "incompletequote_owner_fk")
+  id             String          @id(map: "incomplete_quotes_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fields         Json?           @db.Json
+  ownerid        String          @db.Uuid
+  estimate       Decimal?        @db.Decimal
+  insurance_type insurance_type?
+  users          users           @relation(fields: [ownerid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "incompletequote_owner_fk")
+}
+
+model quotes {
+  id             String         @id(map: "quotes_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  insurance_type insurance_type
+  date_submitted DateTime       @default(dbgenerated("CURRENT_DATE")) @db.Date
+  estimate       Decimal        @db.Decimal
+  ownerid        String         @db.Uuid
+  users          users          @relation(fields: [ownerid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "quote_owner_fk")
 }
 
 model users {
@@ -33,8 +32,8 @@ model users {
   lname            String             @db.VarChar
   dob              DateTime           @db.Date
   email            String             @unique(map: "users_unique")
-  Quotes           Quotes[]           @ignore
   incompletequotes incompletequotes[]
+  quotes           quotes[]
 }
 
 enum insurance_type {

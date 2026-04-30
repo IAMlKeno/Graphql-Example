@@ -2,6 +2,8 @@
 -- PostgreSQL database dump
 --
 
+-- SELECT unnest(enum_range(NULL::public.insurance_type)) AS enum_value;
+
 -- Dumped from database version 17.9 (Debian 17.9-1.pgdg13+1)
 -- Dumped by pg_dump version 17.5 (Homebrew)
 
@@ -63,7 +65,7 @@ SET default_table_access_method = heap;
 -- Name: Quotes; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public."Quotes" (
+CREATE TABLE public."quotes" (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     insurance_type public.insurance_type NOT NULL,
     date_submitted date NOT NULL,
@@ -142,6 +144,9 @@ ALTER TABLE ONLY public.incompletequotes
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pk PRIMARY KEY (id);
 
+ALTER TABLE ONLY public.quotes
+    ADD CONSTRAINT quotes_pk PRIMARY KEY (id);
+
 
 --
 -- TOC entry 3292 (class 2606 OID 16447)
@@ -166,7 +171,7 @@ ALTER TABLE ONLY public.incompletequotes
 -- Name: Quotes quote_owner_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."Quotes"
+ALTER TABLE ONLY public."quotes"
     ADD CONSTRAINT quote_owner_fk FOREIGN KEY (ownerid) REFERENCES public.users(id);
 
 

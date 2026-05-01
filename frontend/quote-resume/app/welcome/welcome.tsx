@@ -5,9 +5,23 @@ import { GET_GREETING } from "~/graphql/queries";
 import InsuranceQuoteForm from "~/components/forms/InsuranceQuoteForm";
 import UserDisplay from "~/components/UserDisplay";
 import RegistrationActions from "~/components/RegistrationActions";
+import { useUser } from "~/context/UserProvider";
+import { useEffect, useState } from "react";
+import { useIncompleteQuote } from "~/graphql/hooks";
+import { IncompleteQuotesList } from "~/components/IncompleteQuotesList";
+import ReactVersion from "~/components/ReactVersion";
 
 export function Welcome() {
   const { data } = useQuery(GET_GREETING);
+  const { user } = useUser();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // on re-render, if a user is present
+    if (user) {
+      setIsLoggedIn(true);
+    }
+  }, [user]);
 
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
@@ -24,6 +38,7 @@ export function Welcome() {
               alt="React Router"
               className="hidden w-full dark:block"
             />
+            <ReactVersion />
           </div>
         </header>
         <div className="max-w-[600px] w-full space-y-6 px-4">
@@ -31,11 +46,18 @@ export function Welcome() {
             <div>
               Output from graphql server: { data?.greeting }
             </div>
-            <RegistrationActions />
-            <div className="user-display-container">
-              <UserDisplay />
-            </div>
+            {!user &&
+              <RegistrationActions />
+            }
+            {user &&
+              <div className="user-display-container">
+                <UserDisplay />
+              </div>
+            }
             <hr />
+            {isLoggedIn && user &&
+              <IncompleteQuotesList ownerid={user.id} />
+            }
             <div className="quote-form">
                 <InsuranceQuoteForm />
             </div>

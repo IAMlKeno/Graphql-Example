@@ -4,10 +4,11 @@ import React, { createContext, useContext, useState } from "react";
 // User Context
 // ----------------------
 export interface User {
-  firstName: string;
-  lastName: string;
+  id: string;
+  fname: string;
+  lname: string;
   email: string;
-  dateOfBirth: string;
+  dob: number;
 }
 
 interface UserContextType {

@@ -1,28 +1,45 @@
-// ----------------------
-// User Select Form
-
 import { useState } from "react";
 import { useUser, type User } from "~/context/UserProvider";
 
-// ----------------------
 export function UserSelectForm() {
   const [email, setEmail] = useState("");
   const [fetchedUser, setFetchedUser] = useState<User | null>(null);
   const { setUser } = useUser();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const response = await fetch("http://localhost:4000/graphql", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: `query Users($email: String!) {
+          userByEmail(email: $email) {
+            fname
+            lname
+            email
+            dob
+            id
+          }
+        }`,
+        variables: { email },
+      }),
+    });
+    const data: User|undefined = (await response.json()).data.userByEmail;
+    console.log(data);
     // Mock API fetch
     const mockUser = {
-      firstName: "John",
-      lastName: "Doe",
+      fname: "John",
+      lname: "Doe",
       email,
-      dateOfBirth: "1990-05-10",
+      dob: 1777566142403,
+      id: "1"
     };
-
-    setFetchedUser(mockUser);
-    setUser(mockUser);
+    if (!data) {
+      return;
+    }
+    setFetchedUser(data);
+    setUser(data);
   };
 
   return (
@@ -49,10 +66,10 @@ export function UserSelectForm() {
 
       {fetchedUser && (
         <div className="mt-4 bg-gray-100 p-4 rounded">
-          <p><strong>First Name:</strong> {fetchedUser.firstName}</p>
-          <p><strong>Last Name:</strong> {fetchedUser.lastName}</p>
+          <p><strong>First Name:</strong> {fetchedUser.fname}</p>
+          <p><strong>Last Name:</strong> {fetchedUser.lname}</p>
           <p><strong>Email:</strong> {fetchedUser.email}</p>
-          <p><strong>Date of Birth:</strong> {fetchedUser.dateOfBirth}</p>
+          <p><strong>Date of Birth:</strong> {fetchedUser.dob}</p>
         </div>
       )}
     </div>

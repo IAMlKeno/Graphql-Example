@@ -1,4 +1,5 @@
 import { gql, type TypedDocumentNode } from "@apollo/client";
+import type { User } from "~/context/UserProvider";
 
 // In a real application, consider generating types from your schema
 // instead of writing them by hand
@@ -10,5 +11,26 @@ type GetGreetingType = {
 export const GET_GREETING: TypedDocumentNode<GetGreetingType> = gql`
   query Query {
     greeting
+  }
+`
+
+export const GET_USER: TypedDocumentNode<User> = gql`
+  query Users($email: String!) {
+    userByEmail(email: $email) {
+      fname
+      lname
+      email
+      dob
+      id
+    }
+  }
+`
+
+export const GET_INCOMPLETE_QUOTES = gql`
+  query Quotes($ownerid: String!) {
+    incompleteQuotesForUser(ownerid: $ownerid) {
+      id
+      insurance_type
+    }
   }
 `

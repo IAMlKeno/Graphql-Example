@@ -6,7 +6,7 @@ export default function UserDisplay() {
   return (
     <>
       {!!user?.email &&
-        <h3>`Hi ${user.firstName}`</h3>
+        <h3>Hi {user.fname}</h3>
       }
     </>
   );

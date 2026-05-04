@@ -1,27 +1,20 @@
-import { useQuery } from "@apollo/client/react";
+import { ApolloProvider } from "@apollo/client/react";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
-import { GET_GREETING } from "~/graphql/queries";
-import InsuranceQuoteForm from "~/components/forms/InsuranceQuoteForm";
-import UserDisplay from "~/components/UserDisplay";
-import RegistrationActions from "~/components/RegistrationActions";
-import { useUser } from "~/context/UserProvider";
-import { useEffect, useState } from "react";
-import { useIncompleteQuote } from "~/graphql/hooks";
-import { IncompleteQuotesList } from "~/components/IncompleteQuotesList";
+import { UserProvider } from "~/context/UserProvider";
+import { useState } from "react";
 import ReactVersion from "~/components/ReactVersion";
+import { QuoteResumeContent } from "~/quote/QuoteResumeContent";
+import RickMortyContent from "~/rickmorty/RickMortyContent";
+import AppSelector from "~/components/AppSelector";
+import { getClient, getRickMortyClient } from "~/graphql/client";
+import { AppTypeEnum, useAppSelector } from "~/context/SelectedAppProvider";
 
 export function Welcome() {
-  const { data } = useQuery(GET_GREETING);
-  const { user } = useUser();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // on re-render, if a user is present
-    if (user) {
-      setIsLoggedIn(true);
-    }
-  }, [user]);
+  // const { user } = useUser();
+  const [showRickMorty, setShowRickMorty] = useState(false);
+  const [showQuote, setShowQuote] = useState(true);
+  const { selectedApp } = useAppSelector();
 
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
@@ -43,24 +36,22 @@ export function Welcome() {
         </header>
         <div className="max-w-[600px] w-full space-y-6 px-4">
           <nav className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 space-y-4">
-            <div>
+            {/* <div>
               Output from graphql server: { data?.greeting }
-            </div>
-            {!user &&
-              <RegistrationActions />
+            </div> */}
+            <AppSelector />
+            {selectedApp == AppTypeEnum.QUOTE_APP &&
+              <ApolloProvider client={getClient()}>
+                <UserProvider>
+                  <QuoteResumeContent />
+                </UserProvider>
+              </ApolloProvider>
             }
-            {user &&
-              <div className="user-display-container">
-                <UserDisplay />
-              </div>
+            {selectedApp == AppTypeEnum.RICK_APP &&
+              <ApolloProvider client={getRickMortyClient()}>
+                <RickMortyContent />
+              </ApolloProvider>
             }
-            <hr />
-            {isLoggedIn && user &&
-              <IncompleteQuotesList ownerid={user.id} />
-            }
-            <div className="quote-form">
-                <InsuranceQuoteForm />
-            </div>
           </nav>
         </div>
       </div>

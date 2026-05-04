@@ -8,3 +8,10 @@ export const getClient = () => new ApolloClient({
   }),
   cache: new InMemoryCache()
 });
+
+export const getRickMortyClient = () => new ApolloClient({
+  link: new HttpLink({
+    uri: "https://rickandmortyapi.com/graphql",
+  }),
+  cache: new InMemoryCache()
+})

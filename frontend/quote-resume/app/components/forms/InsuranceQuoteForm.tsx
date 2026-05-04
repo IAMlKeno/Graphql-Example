@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useQuote } from "~/context/QuoteProvider";
 import { UserProvider, useUser } from "~/context/UserProvider";
 
 interface QuoteFormData {
@@ -16,10 +17,14 @@ export default function InsuranceQuoteForm({ initialData }: InsuranceQuoteFormPr
     initialData?.insuranceType || ""
   );
   const { user } = useUser();
+  const { quote } = useQuote();
 
   const ownerId = initialData?.ownerId || "user-12345";
 
   const calculateEstimate = (type: string) => {
+    if (!quote) {
+      return 0;
+    }
     switch (type) {
       case "automotive":
         return "$120/month";

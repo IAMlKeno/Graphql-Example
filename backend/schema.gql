@@ -18,7 +18,7 @@ type Query {
 }
 
 type User {
-  id: String!
+  id: ID!
   fname: String
   lname: String
   dob: String
@@ -56,14 +56,14 @@ enum InsuranceType {
   life
 }
 type Quote {
-  id: String!
+  id: ID!
   insurance_type: InsuranceType
   date_submitted: String
   estimate: Float!
   ownerid: String
 }
 type User {
-  id: String!
+  id: ID!
   fname: String
   lname: String
   dob: String
@@ -81,7 +81,6 @@ input UserInput {
   email: String!
 }
 
-
 type Mutation {
   addBook(input: BookInput!): Book!
   updateBook(id: ID!, input: BookInput!): Book
@@ -96,4 +95,3 @@ type Mutation {
   updateUser(id: String!, user: UserInput): User
   deleteUser(id: String!): Boolean
 }
-

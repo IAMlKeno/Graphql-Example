@@ -17,3 +17,23 @@ body {
 button:disabled {
   background-color: lightgrey;
 }
+
+a.function-link {
+  text-decoration: underline;
+  color: lightblue;
+}
+a.function-link:hover {
+  text-decoration: unset;
+  color: blue;
+  cursor: pointer;
+}
+
+.incomplete-quotes-table td {
+  margin: auto;
+  padding: 5px;
+}
+
+.data-highlight {
+  color: green;
+  text-decoration: underline;
+}

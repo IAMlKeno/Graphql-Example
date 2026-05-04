@@ -178,6 +178,9 @@ export const resolvers = {
       } catch (e) { return [] }
     },
   },
+  User: {
+    dob: (user: User) => new Date(user.dob).toISOString().slice(0, 10),
+  },
 
   Mutation: {
     addBook: (_: any, input: BookInput) => {

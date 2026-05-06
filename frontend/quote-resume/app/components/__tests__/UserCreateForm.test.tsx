@@ -1,11 +1,26 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { UserCreateForm } from '../forms/UserCreateForm';
+import { UserProvider } from '~/context/UserProvider';
+
+const mockAddUser = vi.fn().mockResolvedValue({ data: { addUser: null } });
+
+vi.mock('@apollo/client/react', () => ({
+  useMutation: () => [mockAddUser, { loading: false }],
+}));
 
 function renderComponent() {
-  return render(<UserCreateForm />);
+  return render(
+    <UserProvider>
+      <UserCreateForm />
+    </UserProvider>
+  );
 }
+
+beforeEach(() => {
+  mockAddUser.mockClear();
+});
 
 describe('UserCreateForm', () => {
   it('renders all form fields', () => {
@@ -57,8 +72,28 @@ describe('UserCreateForm', () => {
     renderComponent();
     const emailInput = screen.getByPlaceholderText('Email');
     await userEvent.type(emailInput, 'someone@test.com');
-    // no blur — no message yet
     expect(screen.queryByText('Email is already in use')).not.toBeInTheDocument();
     expect(screen.queryByText('Email is available')).not.toBeInTheDocument();
+  });
+
+  it('calls the addUser mutation with mapped field names on submit', async () => {
+    renderComponent();
+    await userEvent.type(screen.getByPlaceholderText('First Name'), 'Alice');
+    await userEvent.type(screen.getByPlaceholderText('Last Name'), 'Smith');
+    await userEvent.type(screen.getByPlaceholderText('Email'), 'alice@test.com');
+    fireEvent.change(screen.getByDisplayValue(''), { target: { value: '1990-06-15', name: 'dateOfBirth' } });
+
+    await userEvent.click(screen.getByRole('button', { name: /create user/i }));
+
+    expect(mockAddUser).toHaveBeenCalledWith({
+      variables: {
+        user: {
+          fname: 'Alice',
+          lname: 'Smith',
+          dob: expect.any(String),
+          email: 'alice@test.com',
+        },
+      },
+    });
   });
 });

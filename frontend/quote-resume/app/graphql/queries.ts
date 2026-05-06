@@ -26,6 +26,20 @@ export const GET_USER: TypedDocumentNode<User> = gql`
   }
 `
 
+// type UserInput = Omit<User, 'id'>;
+
+export const ADD_USER: TypedDocumentNode<User|null, Omit<User, 'id'>> = gql`
+  mutation AddUser($user: UserInput!) {
+    addUser(user: $user) {
+      id
+      fname
+      lname
+      email
+      dob
+    }
+  }
+`
+
 export const GET_INCOMPLETE_QUOTES = gql`
   query Quotes($ownerid: String!) {
     incompleteQuotesForUser(ownerid: $ownerid) {

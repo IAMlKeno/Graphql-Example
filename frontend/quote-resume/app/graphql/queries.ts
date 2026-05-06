@@ -26,9 +26,9 @@ export const GET_USER: TypedDocumentNode<User> = gql`
   }
 `
 
-// type UserInput = Omit<User, 'id'>;
+export type UserInput = Omit<User, 'id'>;
 
-export const ADD_USER: TypedDocumentNode<User|null, Omit<User, 'id'>> = gql`
+export const ADD_USER: TypedDocumentNode<User|null, UserInput> = gql`
   mutation AddUser($user: UserInput!) {
     addUser(user: $user) {
       id

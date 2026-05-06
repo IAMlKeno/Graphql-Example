@@ -28,6 +28,10 @@ a.function-link:hover {
   cursor: pointer;
 }
 
+.center {
+  text-align: center;
+}
+
 .incomplete-quotes-table td {
   margin: auto;
   padding: 5px;

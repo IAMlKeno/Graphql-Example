@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import { useUser } from "~/context/UserProvider";
-import { ADD_USER } from "~/graphql/queries";
+import { ADD_USER, type UserInput } from "~/graphql/queries";
 
 interface FormData {
   firstName: string;
@@ -22,7 +22,7 @@ export function UserCreateForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const { setUser } = useUser();
-  const [addUser, { loading }] = useMutation(ADD_USER);
+  const [addUser, { loading }] = useMutation<UserInput>(ADD_USER);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.debug({...formData});

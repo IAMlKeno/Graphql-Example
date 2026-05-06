@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client/react";
 import { GET_GREETING } from "~/graphql/queries";
 import InsuranceQuoteForm from "~/components/forms/InsuranceQuoteForm";
+import SignOutButton from "~/components/SignOutButton";
 import UserDisplay from "~/components/UserDisplay";
 import RegistrationActions from "~/components/RegistrationActions";
 import { useUser } from "~/context/UserProvider";
@@ -9,7 +10,7 @@ import { IncompleteQuotesList } from "~/components/IncompleteQuotesList";
 import { QuoteProvider } from "~/context/QuoteProvider";
 
 export function QuoteResumeContent() {
-  const { data } = useQuery(GET_GREETING);
+  // const { data } = useQuery(GET_GREETING);
   const { user } = useUser();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -22,23 +23,30 @@ export function QuoteResumeContent() {
 
   return (
     <>
+      <h2 className="center">Insurance Quote System</h2>
       {!user &&
+        <div>
+          <div className="center">Sign in or sign up to create a quote</div>
           <RegistrationActions />
-        }
-        {user &&
-          <div className="user-display-container">
-            <UserDisplay />
-          </div>
-        }
-        <hr />
-        <QuoteProvider>
-          {isLoggedIn && user &&
+        </div>
+      }
+      {user &&
+        <div className="user-display-container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <UserDisplay />
+          <SignOutButton />
+        </div>
+      }
+      <hr />
+      <QuoteProvider>
+        {isLoggedIn && user &&
+          <>
             <IncompleteQuotesList ownerid={user.id} />
-          }
-          <div className="quote-form">
-            <InsuranceQuoteForm />
-          </div>
-        </QuoteProvider>
+            <div className="quote-form">
+              <InsuranceQuoteForm />
+            </div>
+          </>
+        }
+      </QuoteProvider>
     </>
   );
 }

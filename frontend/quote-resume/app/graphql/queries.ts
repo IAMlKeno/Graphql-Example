@@ -51,12 +51,24 @@ export const ADD_QUOTE: TypedDocumentNode<Quote|null, QuoteInput> = gql`
     }
   }
 `
+export const UPDATE_QUOTE: TypedDocumentNode<Quote|null, Quote> = gql`
+  mutation UpdateQuote($id: ID!, $quote: QuoteInput!) {
+    updateQuote(id: $id, quote: $quote) {
+      id
+      estimate
+      insurance_type
+      ownerid
+    }
+  }
+`
 
-export const GET_INCOMPLETE_QUOTES = gql`
+export const GET_INCOMPLETE_QUOTES: TypedDocumentNode<Array<Quote>, string> = gql`
   query Quotes($ownerid: String!) {
     incompleteQuotesForUser(ownerid: $ownerid) {
       id
       insurance_type
+      date_submitted
+      estimate
     }
   }
 `

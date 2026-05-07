@@ -18,6 +18,9 @@ button:disabled {
   background-color: lightgrey;
 }
 
+div.max {
+  width: 100%;
+}
 a.function-link {
   text-decoration: underline;
   color: lightblue;

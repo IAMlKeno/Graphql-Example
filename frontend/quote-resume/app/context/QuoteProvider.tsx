@@ -9,7 +9,8 @@ export interface Quote {
   id: string;
   insurance_type: InsuranceType;
   estimate: number;
-  // ownerid: String
+  data_submitted?: string;
+  ownerid?: String
 }
 
 interface QuoteContextType {
@@ -20,7 +21,7 @@ interface QuoteContextType {
 const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
 
 export const QuoteProvider = ({children}: {children: React.ReactNode}) => {
-  const [quote, setQuote] = useState<Quote | null>(null);
+  const [quote, setQuote] = useState<Quote | null>();
 
   return (
     <QuoteContext.Provider value={{ quote, setQuote }}>

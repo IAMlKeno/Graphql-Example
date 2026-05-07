@@ -11,9 +11,6 @@ import { getClient, getRickMortyClient } from "~/graphql/client";
 import { AppTypeEnum, useAppSelector } from "~/context/SelectedAppProvider";
 
 export function Welcome() {
-  // const { user } = useUser();
-  const [showRickMorty, setShowRickMorty] = useState(false);
-  const [showQuote, setShowQuote] = useState(true);
   const { selectedApp } = useAppSelector();
 
   return (
@@ -36,11 +33,11 @@ export function Welcome() {
         </header>
         <div className="max-w-[600px] w-full space-y-6 px-4">
           <nav className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 space-y-4">
-            {/* <div>
-              Output from graphql server: { data?.greeting }
-            </div> */}
             <AppSelector />
-            {selectedApp == AppTypeEnum.QUOTE_APP &&
+            
+          </nav>
+        </div>
+        {selectedApp == AppTypeEnum.QUOTE_APP &&
               <ApolloProvider client={getClient()}>
                 <UserProvider>
                   <QuoteResumeContent />
@@ -52,8 +49,6 @@ export function Welcome() {
                 <RickMortyContent />
               </ApolloProvider>
             }
-          </nav>
-        </div>
       </div>
     </main>
   );

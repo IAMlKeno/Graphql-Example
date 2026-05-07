@@ -1,4 +1,5 @@
 import { gql, type TypedDocumentNode } from "@apollo/client";
+import type { Quote } from "~/context/QuoteProvider";
 import type { User } from "~/context/UserProvider";
 
 // In a real application, consider generating types from your schema
@@ -36,6 +37,17 @@ export const ADD_USER: TypedDocumentNode<User|null, UserInput> = gql`
       lname
       email
       dob
+    }
+  }
+`
+export type QuoteInput = Omit<Quote, 'id'>;
+export const ADD_QUOTE: TypedDocumentNode<Quote|null, QuoteInput> = gql`
+  mutation AddQuote($quote: QuoteInput!) {
+    addQuote(quote: $quote) {
+      id
+      estimate
+      insurance_type
+      ownerid
     }
   }
 `

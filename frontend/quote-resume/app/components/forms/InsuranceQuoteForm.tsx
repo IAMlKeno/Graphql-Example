@@ -1,11 +1,14 @@
-import React, { useContext, useState } from "react";
-import { useQuote } from "~/context/QuoteProvider";
-import { UserProvider, useUser } from "~/context/UserProvider";
+import { useMutation } from "@apollo/client/react";
+import React, { useEffect, useMemo, useState } from "react";
+import { InsuranceType, useQuote } from "~/context/QuoteProvider";
+import { useUser } from "~/context/UserProvider";
+import { ADD_QUOTE, type QuoteInput } from "~/graphql/queries";
+import { calculateAge, calculateInsuranceRate } from "~/quote/utils";
 
 interface QuoteFormData {
   insuranceType?: string;
-  estimate?: string;
-  ownerId?: string;
+  estimate?: number;
+  ownerid?: string;
 }
 
 interface InsuranceQuoteFormProps {
@@ -18,38 +21,60 @@ export default function InsuranceQuoteForm({ initialData }: InsuranceQuoteFormPr
   );
   const { user } = useUser();
   const { quote } = useQuote();
+  const [estimate, setEstimate] = useState(0);
+  const [ownerid, setOwnerId] = useState('');
 
-  const ownerId = initialData?.ownerId || "user-12345";
+  const userAge = useMemo(() => {
+    const dob = user.dob;
+    console.log(dob);
+    return calculateAge(user.dob.toString());
+  }, [user]);
 
-  const calculateEstimate = (type: string) => {
-    if (!quote) {
-      return 0;
-    }
-    switch (type) {
-      case "automotive":
-        return "$120/month";
-      case "home":
-        return "$85/month";
-      case "life":
-        return "$60/month";
-      default:
-        return "";
-    }
+  const [addQuote, { loading, error }] = useMutation<QuoteInput>(ADD_QUOTE);
+
+  useEffect(() => {
+    setOwnerId(initialData?.ownerid || user.id);
+  }, [user]);
+
+  const calculateEstimate = (type: string): number => {
+    return calculateInsuranceRate(userAge, InsuranceType[type]);
   };
 
-  const estimate = initialData?.estimate || calculateEstimate(insuranceType);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
     const payload = {
       insuranceType,
       estimate,
-      ownerId,
+      ownerid,
     };
 
     console.log("Submitting quote:", payload);
+    try{
+       const { data }: any = await addQuote({
+        variables: {
+          quote: {
+            insurance_type: insuranceType,
+            ownerid,
+            estimate
+          },
+        },
+      });
+      if (data?.addQuote) {
+        alert(`Successfully added quote ${data.addQuote.id}`)
+      }
+    } catch(e) {
+      console.error(`Failed to add the quote with the following error`, e, error);
+    }
   };
+
+  const handleInsuranceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const type = e.currentTarget.value;
+    console.log(type);
+    setInsuranceType(type);
+    const estimate: number = calculateEstimate(type);
+    setEstimate(estimate);
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -62,7 +87,8 @@ export default function InsuranceQuoteForm({ initialData }: InsuranceQuoteFormPr
         <label className="block mb-2 font-medium">Insurance Type</label>
         <select
           value={insuranceType}
-          onChange={(e) => setInsuranceType(e.target.value)}
+          name="type"
+          onChange={handleInsuranceChange}
           className="w-full border rounded-lg p-2 mb-4"
           required
         >
@@ -72,15 +98,16 @@ export default function InsuranceQuoteForm({ initialData }: InsuranceQuoteFormPr
           <option value="life">Life</option>
         </select>
 
-        <label className="block mb-2 font-medium">Estimated Premium</label>
+        <label className="block mb-2 font-medium">Estimated Premium (Based on your calculated age of: {userAge})</label>
         <input
           type="text"
+          name="estimate"
           value={estimate}
           readOnly
           className="w-full border rounded-lg p-2 mb-4 bg-gray-100"
         />
 
-        <input type="hidden" value={ownerId} name="ownerId" />
+        <input type="hidden" value={ownerid} name="ownerId" />
 
         <hr />
         <div className="user-context">

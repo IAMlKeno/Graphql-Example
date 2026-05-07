@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
 
 export enum InsuranceType {
-  automotive,
-  home,
-  life,
+  automotive = "automotive",
+  home = "home",
+  life = "life",
 }
 export interface Quote {
   id: string;

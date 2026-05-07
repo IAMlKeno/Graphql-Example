@@ -33,7 +33,7 @@ CREATE TABLE public.incompletequotes (
     ownerid uuid NOT NULL,
     estimate numeric,
     insurance_type public.insurance_type,
-    date_added date DEFAULT CURRENT_DATE
+    date_submitted date DEFAULT CURRENT_DATE
 );
 
 

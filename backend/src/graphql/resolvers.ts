@@ -181,6 +181,10 @@ export const resolvers = {
   User: {
     dob: (user: User) => new Date(user.dob).toISOString().slice(0, 10),
   },
+  Quote: {
+    estimate: (quote: Quote) => quote.estimate ?? 0,
+    date_submitted: (quote: Quote) => new Date(quote.date_submitted).toISOString().slice(0, 10),
+  },
 
   Mutation: {
     addBook: (_: any, input: BookInput) => {

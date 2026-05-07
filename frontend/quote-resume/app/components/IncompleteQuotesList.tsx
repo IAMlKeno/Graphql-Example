@@ -43,14 +43,18 @@ export function IncompleteQuotesList({ ownerid }: QuoteList) {
           <>
             <div style={{ margin: "auto", textAlign: "center" }}> Here are some quotes you haven't complete:</div>
             <table className="incomplete-quotes-table">
-              <tr><th>Qoute Id</th><th>Type</th><th>Actions</th></tr>
-              {(quotes).map((quote, idx) => (
-                <tr key={idx}>
-                  <td>{quote.id.substr(0, 7)}</td>
-                  <td>{quote.insurance_type}</td>
-                  <td><a className="function-link" onClick={() => handleContinue(quote)}>continue</a> | <a className="function-link" onClick={() => handleDelete(quote)}>delete</a></td>
-                </tr>
-              ))}
+              <thead>
+                <tr><th>Qoute Id</th><th>Type</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                {(quotes).map((quote, idx) => (
+                  <tr key={idx}>
+                    <td>{quote.id.substr(0, 7)}</td>
+                    <td>{quote.insurance_type}</td>
+                    <td><a className="function-link" onClick={() => handleContinue(quote)}>continue</a> | <a className="function-link" onClick={() => handleDelete(quote)}>delete</a></td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </>
         }

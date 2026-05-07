@@ -1,7 +1,6 @@
 import { useQuery } from "@apollo/client/react";
-import React, { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuote, type Quote } from "~/context/QuoteProvider";
-import { useIncompleteQuote } from "~/graphql/hooks";
 import { GET_INCOMPLETE_QUOTES } from "~/graphql/queries";
 import { getUuidSubstring } from "~/utils";
 
@@ -21,19 +20,7 @@ export function IncompleteQuotesList({ ownerid }: QuoteList) {
       console.debug('quotes', data);
       setQuotes(data.incompleteQuotesForUser);
     }
-    // const getIncompleteQuotes = async () => {
-    //   const quotes = await useIncompleteQuote(ownerid);
-    //   console.debug('INCOMPLETE QUOTES:', quotes);
-    //   setQuotes(quotes);
-    // }
-    // getIncompleteQuotes();
   }, [loading]);
-
-  const handleOnClick = (e: React.SubmitEvent, input) => {
-    e.preventDefault();
-    const v = e.target.value;
-    console.debug()
-  }
 
   const handleContinue = (quote: Quote) => {
     console.log(`Continuing qoute: ${quote.id}`, {...quote});

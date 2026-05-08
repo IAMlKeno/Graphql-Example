@@ -15,7 +15,6 @@ export default function RickMortyContent() {
   })
 
   useEffect(() => {
-    console.log('component re-rendered');
     setIsLoading(true);
     const timer = setTimeout(() => { console.log('adding extra time to see loading')}, 5000);
     if (data) {
@@ -29,30 +28,28 @@ export default function RickMortyContent() {
     clearInterval(timer);
   }, [data]);
 
-  const handleChange = (evt) => {
+  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     evt.preventDefault();
-    const value = evt.target.value;
+    const value: number = parseInt(evt.currentTarget.value);
     if (isNaN(value)) {
       alert("enter a valid number");
       return;
     }
-    console.log(value)
+
     setEpisode(Number(value));
   }
-
 
   return <>
     <div>
       <h2>Rick and Morty GraphQL API</h2>
-      <p><a href="https://rickandmortyapi.com/" target="blank">API</a></p>
+      <p><a href="https://rickandmortyapi.com/" target="blank" className="function-link">Rick and Morty API</a></p>
       <div>
         <form>
-          <label htmlFor="epi_num">Enter an episode number:</label>
-          <input type="number" name="epi_num" onChange={handleChange} style={{border: "1px solid"}} size={3}/>
+          <label htmlFor="epi_num">Enter an episode number:</label>&nbsp;&nbsp;
+          <input type="number" name="epi_num" onChange={handleChange} style={{border: "1px solid"}} size={3} placeholder="3"/>
         </form>
       </div>
       <hr />
-      {/* {isLoading && */}
       {loading &&
           <ClipLoader
           color="green"

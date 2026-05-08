@@ -61,8 +61,13 @@ export const UPDATE_QUOTE: TypedDocumentNode<Quote|null, Quote> = gql`
     }
   }
 `
+export const DELETE_INCOMPLETE_QUOTE: TypedDocumentNode<boolean, string> = gql`
+  mutation DeleteIncompleteQuote($id: ID!) {
+    deleteIncompleteQuote(id: $id)
+  }
+`
 
-export const GET_INCOMPLETE_QUOTES: TypedDocumentNode<Array<Quote>, string> = gql`
+export const GET_INCOMPLETE_QUOTES: TypedDocumentNode<{ incompleteQuotesForUser: Array<Quote>}, string> = gql`
   query Quotes($ownerid: String!) {
     incompleteQuotesForUser(ownerid: $ownerid) {
       id

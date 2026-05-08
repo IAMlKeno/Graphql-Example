@@ -1,8 +1,8 @@
 import { useMutation } from "@apollo/client/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { InsuranceType, useQuote } from "~/context/QuoteProvider";
+import { InsuranceType, useQuote, type Quote } from "~/context/QuoteProvider";
 import { useUser } from "~/context/UserProvider";
-import { ADD_QUOTE, type QuoteInput } from "~/graphql/queries";
+import { ADD_QUOTE, DELETE_INCOMPLETE_QUOTE, type QuoteInput } from "~/graphql/queries";
 import { calculateAge, calculateInsuranceRate } from "~/quote/utils";
 import { getUuidSubstring } from "~/utils";
 
@@ -30,6 +30,7 @@ export default function InsuranceQuoteForm({ initialData }: InsuranceQuoteFormPr
   const userAge = useMemo(() => calculateAge(user.dob.toString()), [user]);
 
   const [addQuote, { loading, error }] = useMutation<QuoteInput>(ADD_QUOTE);
+  const [deleteQuote] = useMutation<boolean>(DELETE_INCOMPLETE_QUOTE);
 
   useEffect(() => {
     setOwnerId(initialData?.ownerid || user.id);
@@ -62,25 +63,46 @@ export default function InsuranceQuoteForm({ initialData }: InsuranceQuoteFormPr
     console.log("Submitting quote:", payload);
     try{
       await handleAddQuote();
+      if (quote.id) {
+        handleDeleteIncompleteQuote();
+      }
     } catch(e) {
       console.error(`Failed to add the quote with the following error`, e, error);
     }
   };
 
-  const handleAddQuote = async () => {
+  const handleDeleteIncompleteQuote = async () => {
+    try {
+      const { data }: any = await deleteQuote({
+        variables: {
+          id: quote.id
+        }
+      });
+      console.log(`Result of deletion: ${data?.deleteIncompleteQuote}`);
+      if (data?.deleteIncompleteQuote) {
+        // remove from state
+
+      }
+    } catch (e) {
+
+    }
+  }
+
+  const handleAddQuote = async (): Promise<Quote | undefined> => {
     const { data }: any = await addQuote({
       variables: {
         quote: {
           insurance_type: insuranceType,
           ownerid,
           estimate,
-          id: quote.id
         },
       },
     });
     if (data?.addQuote) {
       alert(`Successfully added quote ${data.addQuote.id}`)
+      return { ...data?.addQuote }
     }
+    return undefined
   }
 
   const handleInsuranceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -136,7 +158,6 @@ export default function InsuranceQuoteForm({ initialData }: InsuranceQuoteFormPr
           />
 
           <input type="hidden" value={ownerid} name="ownerId" />
-          <input type="hidden" ref={quoteIdElem} value={(quote && quote?.id) ? quote.id : ''} name="id" />
 
           <hr />
           <div className="user-context">

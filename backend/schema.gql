@@ -85,13 +85,13 @@ type Mutation {
   addBook(input: BookInput!): Book!
   updateBook(id: ID!, input: BookInput!): Book
   deleteBook(id: ID!): Boolean
-  addQuote(quote: QuoteInput): Quote!
-  updateQuote(id: String, quote: QuoteInput): Quote
-  deleteQuote(id: String!): Boolean
-  addIncompleteQuote(quote: QuoteInput): Quote
-  updateIncompleteQuote(id: String!, quote: QuoteInput): Boolean
-  deleteIncompleteQuote(id: String!): Boolean
-  addUser(user: UserInput): User!
-  updateUser(id: String!, user: UserInput): User
-  deleteUser(id: String!): Boolean
+  addQuote(quote: QuoteInput!): Quote!
+  updateQuote(id: ID!, quote: QuoteInput!): Quote
+  deleteQuote(id: ID!): Boolean
+  addIncompleteQuote(quote: QuoteInput!): Quote
+  updateIncompleteQuote(id: ID!, quote: QuoteInput!): Boolean
+  deleteIncompleteQuote(id: ID!): Boolean
+  addUser(user: UserInput!): User!
+  updateUser(id: ID!, user: UserInput!): User
+  deleteUser(id: ID!): Boolean
 }

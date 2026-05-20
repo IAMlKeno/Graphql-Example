@@ -23,10 +23,30 @@ const mockPrisma = {
     update: vi.fn(),
     delete: vi.fn(),
   },
+  $on: vi.fn(),
 };
 
+vi.mock('telemetry/openobserve', () => ({
+  sendToOpenObserve: vi.fn(),
+}));
+
+vi.mock('telemetry/logger', () => ({
+  logger: {
+    child: vi.fn().mockReturnValue({
+      info: vi.fn(),
+      debug: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+    }),
+    info: vi.fn(),
+    debug: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
 vi.mock('../../generated/prisma/client', () => ({
-  PrismaClient: vi.fn(() => mockPrisma),
+  PrismaClient: vi.fn(function () { return mockPrisma; }),
   insurance_type: {
     automotive: 'automotive',
     home: 'home',

@@ -62,23 +62,11 @@ type Quote {
   estimate: Float!
   ownerid: String
 }
-type User {
-  id: ID!
-  fname: String
-  lname: String
-  dob: String
-  email: String!
-}
+
 input QuoteInput {
   insurance_type: InsuranceType
   estimate: Float!
   ownerid: String
-}
-input UserInput {
-  fname: String
-  lname: String
-  dob: String
-  email: String!
 }
 
 type Mutation {

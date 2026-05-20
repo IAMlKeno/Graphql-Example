@@ -1,26 +1,46 @@
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware as apolloMiddleware } from '@as-integrations/express5'
 import cors from 'cors';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express from "express";
 import { readFile } from "node:fs/promises";
 import { resolvers } from "./graphql/resolvers";
 import { tracingMiddleware } from "middleware/tracing";
 import { loggingPlugin } from "utils/logging";
+import { pinoHttp } from 'pino-http';
+import { logger } from "telemetry/logger";
 
 const PORT = 4000;
 const app = express();
-app.use(cors(), express.json(), tracingMiddleware);
+app.use(
+  pinoHttp({
+    logger,
+    genReqId: (req) => req.headers['x-request-id'] || crypto.randomUUID(),
+  }),
+  cors(),
+  express.json(),
+  tracingMiddleware
+);
 
-
-const typeDefs = await readFile('./schema.gql', 'utf8');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const typeDefs = await readFile(join(__dirname, '../schema.gql'), 'utf8');
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   plugins: [loggingPlugin],
+  introspection: true,
 });
 await server.start();
-app.use('/graphql', apolloMiddleware(server));
+app.use('/graphql', apolloMiddleware(server, {
+  context: async ({ req }) => ({ req }),
+}));
+
+if (!process.env.OO_ENDPOINT || !process.env.OO_AUTH) {
+  console.warn('OpenObserve env vars missing — telemetry disabled');
+}
+
 app.listen({ port: PORT }, () => {
   console.log(`Server running on port ${PORT}`);
 });

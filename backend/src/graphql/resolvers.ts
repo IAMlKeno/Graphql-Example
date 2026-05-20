@@ -1,3 +1,4 @@
+import { sendToOpenObserve } from "telemetry/openobserve";
 import { incompletequotes, insurance_type, PrismaClient, quotes as Quote, users as User } from "../../generated/prisma/client";
 import { quotesUpdateInput } from "../../generated/prisma/models";
 
@@ -25,7 +26,16 @@ const books: Array<Book> = [
   }
 ];
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({log: ["error", "query", "warn"]});
+prisma.$on("query", async (e) => {
+  await sendToOpenObserve({
+    type: "db_query",
+    query: e.query,
+    duration: e.duration,
+    timestamp: new Date().toISOString(),
+  });
+});
+
 export interface BookInput {
   title: string;
   author: string;

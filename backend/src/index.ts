@@ -4,15 +4,21 @@ import cors from 'cors';
 import express from "express";
 import { readFile } from "node:fs/promises";
 import { resolvers } from "./graphql/resolvers";
+import { tracingMiddleware } from "middleware/tracing";
+import { loggingPlugin } from "utils/logging";
 
 const PORT = 4000;
 const app = express();
-app.use(cors(), express.json()/*, authMiddleware*/);
+app.use(cors(), express.json(), tracingMiddleware);
 
 
 const typeDefs = await readFile('./schema.gql', 'utf8');
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  plugins: [loggingPlugin],
+});
 await server.start();
 app.use('/graphql', apolloMiddleware(server));
 app.listen({ port: PORT }, () => {

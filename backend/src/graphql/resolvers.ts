@@ -36,6 +36,7 @@ const prisma = new PrismaClient({
 });
 prisma.$on("query", async (e) => {
   sendToOpenObserve({
+    level: 'info',
     type: "db_query",
     query: e.query,
     duration: e.duration,

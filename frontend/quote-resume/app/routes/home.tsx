@@ -4,8 +4,8 @@ import { AppSelectorProvider } from "~/context/SelectedAppProvider";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Keno - GraphQL Demo App" },
+    { name: "description", content: "Let's play with GraphQL!" },
   ];
 }
 

@@ -39,12 +39,16 @@ export default function RickMortyContent() {
     setEpisode(Number(value));
   }
 
+  const handleSubmit = (evt: React.SubmitEvent) => {
+    evt.preventDefault();
+  }
+
   return <>
     <div>
       <h2>Rick and Morty GraphQL API</h2>
       <p><a href="https://rickandmortyapi.com/" target="blank" className="function-link">Rick and Morty API</a></p>
       <div>
-        <form>
+        <form id="episode-form" onSubmit={handleSubmit}>
           <label htmlFor="epi_num">Enter an episode number:</label>&nbsp;&nbsp;
           <input type="number" name="epi_num" onChange={handleChange} style={{border: "1px solid"}} size={3} placeholder="3"/>
         </form>

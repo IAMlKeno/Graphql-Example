@@ -11,17 +11,11 @@ const rickMLink = new HttpLink({
 });
 
 export const getClient = () => new ApolloClient({
-  link: ApolloLink.from([localLink, traceLink, errorLink]),
-  // link: new HttpLink({
-  //   uri: "http://localhost:4000/graphql",
-  // }),
+  link: ApolloLink.from([traceLink, errorLink, localLink]),
   cache: new InMemoryCache()
 });
 
 export const getRickMortyClient = () => new ApolloClient({
-  // link: new HttpLink({
-  //   uri: "https://rickandmortyapi.com/graphql",
-  // }),
   link: ApolloLink.from([rickMLink]),
   cache: new InMemoryCache()
 })

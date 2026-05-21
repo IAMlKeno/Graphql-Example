@@ -28,6 +28,8 @@ export const traceLink: ApolloLink | undefined = new ApolloLink((operation, forw
           }),
         });
 
+        observer.next(response);
+
         return response;
       },
       error: (err) => observer.error(err),
@@ -37,7 +39,7 @@ export const traceLink: ApolloLink | undefined = new ApolloLink((operation, forw
     return () => {
       if (subscription) subscription.unsubscribe();
     }
-  })
+  });
 });
 
 export const errorLink = new ErrorLink(({ error, operation }) => {

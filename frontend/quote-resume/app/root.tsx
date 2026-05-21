@@ -42,6 +42,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  if (!import.meta.env.VITE_OO_ENDPOINT || !import.meta.env.VITE_OO_AUTH) {
+    console.warn('OpenObserve env vars missing — telemetry disabled');
+  }
   return <Outlet />;
 }
 

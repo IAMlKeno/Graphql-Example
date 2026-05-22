@@ -9,6 +9,7 @@ import RickMortyContent from "~/rickmorty/RickMortyContent";
 import AppSelector from "~/components/AppSelector";
 import { getClient, getRickMortyClient } from "~/graphql/client";
 import { AppTypeEnum, useAppSelector } from "~/context/SelectedAppProvider";
+import ProgressForm from "~/components/forms/ProgressForm";
 
 export function Welcome() {
   const { selectedApp } = useAppSelector();
@@ -34,21 +35,24 @@ export function Welcome() {
         <div className="max-w-[600px] w-full space-y-6 px-4">
           <nav className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 space-y-4">
             <AppSelector />
-            
+
           </nav>
         </div>
         {selectedApp == AppTypeEnum.QUOTE_APP &&
-              <ApolloProvider client={getClient()}>
-                <UserProvider>
-                  <QuoteResumeContent />
-                </UserProvider>
-              </ApolloProvider>
-            }
-            {selectedApp == AppTypeEnum.RICK_APP &&
-              <ApolloProvider client={getRickMortyClient()}>
-                <RickMortyContent />
-              </ApolloProvider>
-            }
+          <ApolloProvider client={getClient()}>
+            <UserProvider>
+              <QuoteResumeContent />
+            </UserProvider>
+          </ApolloProvider>
+        }
+        {selectedApp == AppTypeEnum.RICK_APP &&
+          <ApolloProvider client={getRickMortyClient()}>
+            <RickMortyContent />
+          </ApolloProvider>
+        }
+        {selectedApp == AppTypeEnum.PROGRESS_FORM_APP &&
+          <ProgressForm />
+        }
       </div>
     </main>
   );

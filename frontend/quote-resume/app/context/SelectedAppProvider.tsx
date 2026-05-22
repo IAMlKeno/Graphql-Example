@@ -2,7 +2,8 @@ import React, { createContext, useContext, useState } from "react";
 
 export enum AppTypeEnum {
   QUOTE_APP,
-  RICK_APP
+  RICK_APP,
+  PROGRESS_FORM_APP,
 }
 
 interface SelectedAppContextType {

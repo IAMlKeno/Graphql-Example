@@ -101,6 +101,7 @@ Then prefix the result with `Basic `.
 | **Traefik** | Reverse proxy that routes `/graphql` to the backend |
 | **Vitest** | Test runner for both frontend and backend |
 | **React Testing Library** | Component testing utilities |
+| **React Hook Form** | Performant, flexible and extensible forms with easy-to-use validation |
 
 ## Service Architecture
 

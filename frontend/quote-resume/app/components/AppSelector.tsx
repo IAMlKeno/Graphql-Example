@@ -1,23 +1,8 @@
-import { useRef, useState } from "react";
 import { AppTypeEnum, useAppSelector } from "~/context/SelectedAppProvider";
 
 export default function AppSelector() {
-  const [rickApp, setRickApp] = useState(false);
-  const [quoteApp, setQuoteApp] = useState(true);
-  const { setSelectedApp } = useAppSelector();
-  // const showQuoteBtn = useRef(document.querySelector('.show-quote-btn'));
-  // const showRickBtn = useRef(document.querySelector('.show-rick-btn'));
-
-  const handleShowQuoteApp = () => {
-    setRickApp(false);
-    setQuoteApp(true);
-    setSelectedApp(AppTypeEnum.QUOTE_APP);
-  }
-  const handleShowRickApp = () => {
-    setQuoteApp(false);
-    setRickApp(true);
-    setSelectedApp(AppTypeEnum.RICK_APP);
-  }
+  const { selectedApp, setSelectedApp } = useAppSelector();
+  const handleAppSelection = (app: AppTypeEnum) => setSelectedApp(app);
 
   return (
     <>
@@ -26,16 +11,23 @@ export default function AppSelector() {
           <button
             type="button"
             className="w-full bg-blue-200 text-white py-2 rounded-lg hover:bg-blue-300 show-quote-btn"
-            onClick={handleShowQuoteApp}
-            disabled={quoteApp === true}
+            onClick={() => handleAppSelection(AppTypeEnum.QUOTE_APP)}
+            disabled={selectedApp == AppTypeEnum.QUOTE_APP}
           >Quote App</button> |
           {/* ---------- */}
           <button
             type="button"
             className="w-full bg-blue-200 text-white py-2 rounded-lg hover:bg-blue-300 show-rick-btn"
-            onClick={handleShowRickApp}
-            disabled={rickApp === true}
-          >Rick and Morty App</button>
+            onClick={() => handleAppSelection(AppTypeEnum.RICK_APP)}
+            disabled={selectedApp == AppTypeEnum.RICK_APP}
+          >Rick and Morty App</button> |
+          {/* ---------- */}
+          <button
+            type="button"
+            className="w-full bg-blue-200 text-white py-2 rounded-lg hover:bg-blue-300 show-rick-btn"
+            onClick={() => handleAppSelection(AppTypeEnum.PROGRESS_FORM_APP)}
+            disabled={selectedApp == AppTypeEnum.PROGRESS_FORM_APP}
+          >Progress Form App</button>
         </div>
       </div>
     </>
